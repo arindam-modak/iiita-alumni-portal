@@ -101,6 +101,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Login related settings
+# AUTHENTICATION_BACKENDS = ['portal.auth.PasswordBasedBackend']
+# LOGIN_REDIRECT_URL = '/'
+# LOGIN_URL = LOGIN_REDIRECT_URL
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 7200  # 2 hours
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 

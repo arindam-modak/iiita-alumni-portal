@@ -1,3 +1,5 @@
+from os.path import splitext
+from uuid import uuid4
 from enum import Enum
 from django.db import models
 
@@ -44,6 +46,14 @@ class Visibility(int, Choice, Enum):
     iiita = 2
 
 
+def get_default_scope(scope=Visibility.iiita, null=True):
+    return models.SmallIntegerField(
+        choices=Visibility.choices(),
+        null=null,
+        default=scope
+    )
+
+
 # Create your models here.
 
 class Address(models.Model):
@@ -53,10 +63,6 @@ class Address(models.Model):
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=20)
-    scope = models.SmallIntegerField(
-        choices=Visibility.choices(),
-        default=Visibility.iiita
-    )
     user_roll_no = models.CharField(max_length=20)
 
     def __str__(self):
@@ -69,60 +75,62 @@ class Address(models.Model):
 
 
 class User(models.Model):
+
+    def handle_upload(instance, filename):
+        return '{}/{}{}'.format('uploads', instance.roll_no, splitext(filename)[1])
+
+    # basic info
     roll_no = models.CharField(max_length=20, primary_key=True)
     name = models.CharField(max_length=100, null=False)
     date_of_birth = models.DateField(null=False)
     gender = models.SmallIntegerField(choices=Gender.choices(), null=False)
     blood_group = models.SmallIntegerField(choices=BloodGroup.choices(), null=True, blank=True)
     marital_status = models.SmallIntegerField(choices=MaritalStatus.choices(), null=True, blank=True)
-    photograph = models.ImageField(upload_to='images', null=True, blank=True)
     nationality = models.CharField(max_length=50, null=False, blank=True)
+    photograph = models.ImageField(upload_to=handle_upload, null=True, blank=True)
 
+    # email and phone
     email_1 = models.EmailField(null=False, unique=True)
     email_2 = models.EmailField(null=True, blank=True)
     phone_1 = models.CharField(max_length=20, null=True, blank=True)
     phone_2 = models.CharField(max_length=20, null=True, blank=True)
 
+    # social links
     link_facebook = models.CharField(max_length=100, null=True, blank=True)
     link_twitter = models.CharField(max_length=100, null=True, blank=True)
     link_linkedin = models.CharField(max_length=100, null=True, blank=True)
     link_skype = models.CharField(max_length=100, null=True, blank=True)
 
-    choice_facebook_scope = models.SmallIntegerField(
-        choices=Visibility.choices(),
-        null=True,
-        default=Visibility.iiita
-    )
-    choice_twitter_scope = models.SmallIntegerField(
-        choices=Visibility.choices(),
-        null=True,
-        default=Visibility.iiita
-    )
-    choice_linkedin_scope = models.SmallIntegerField(
-        choices=Visibility.choices(),
-        null=True,
-        default=Visibility.iiita
-    )
-    choice_skype_scope = models.SmallIntegerField(
-        choices=Visibility.choices(),
-        null=True,
-        default=Visibility.iiita
-    )
+    # social links scope
+    scope_facebook = get_default_scope()
+    scope_twitter = get_default_scope()
+    scope_linkedin = get_default_scope()
+    scope_skype = get_default_scope()
 
+    # social link to be public
     link_github = models.CharField(max_length=100, null=True, blank=True)
     link_blog = models.CharField(max_length=200, null=True, blank=True)
     link_website = models.CharField(max_length=200, null=True, blank=True)
 
+    # addresses
     permanent_address = models.ForeignKey(
         Address,
         on_delete=models.CASCADE,
         related_name='permanent_address',
+        null=True,
+        blank=True
     )
     current_address = models.ForeignKey(
         Address,
         on_delete=models.CASCADE,
         related_name='current_address',
+        null=True,
+        blank=True
     )
+
+    # addresss scope
+    scope_permanent_address = get_default_scope()
+    scope_current_address = get_default_scope()
 
     def __str__(self):
         return "{} | {}".format(self.roll_no, self.name)
@@ -149,3 +157,11 @@ class WorkExperience(models.Model):
         Address,
         on_delete=models.CASCADE
     )
+
+
+class UserSession(models.Model):
+    user = models.ForeignKey(User)
+    sessionid = models.TextField(primary_key=True, max_length=100, null=False, default=uuid4().hex)
+
+    def __str__(self):
+        return "{} | {}".format(self.user.roll_no, self.sessionid)

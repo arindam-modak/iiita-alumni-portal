@@ -1,0 +1,45 @@
+<table>
+    <tr>
+        <td>Email 2</td><td>{{ email_2 }}</td>
+    </tr>
+    <tr>
+        <td>Phone 1</td><td>{{ phone_1 }}</td>
+        <td>Phone 2</td><td>{{ phone_2 }}</td>
+    </tr>
+    <tr>
+        <td>Marital Status</td><td>{{ marital_status }}</td>
+    </tr>
+    <tr>
+        <td>Blood group</td><td>{{ blood_group }}</td>
+    </tr>
+    <tr>
+        <td>Photograph</td><td>{{ photograph }}</td>
+    </tr>
+    <tr>
+        <td>Nationality</td><td>{{ nationality }}</td>
+    </tr>
+    <tr>
+        <td>Permanent address</td>
+        <td>
+            {{ permanent_address.address_line_1 }}
+            {{ permanent_address.address_line_2 }}
+            {{ permanent_address.city }}
+            {{ permanent_address.state }}
+            {{ permanent_address.country }}
+            {{ permanent_address.zip_code }}
+            {{ permanent_address.scope }}
+        </td>
+    </tr>
+    <tr>
+        <td>Current address</td>
+        <td>
+            {{ current_address.address_line_1 }}
+            {{ current_address.address_line_2 }}
+            {{ current_address.city }}
+            {{ current_address.state }}
+            {{ current_address.country }}
+            {{ current_address.zip_code }}
+            {{ current_address.scope }}
+        </td>
+    </tr>
+</table>
