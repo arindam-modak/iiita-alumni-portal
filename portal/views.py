@@ -11,6 +11,7 @@ from uuid import uuid4
 
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.http import HttpResponse
+from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
@@ -22,7 +23,7 @@ from .models import User, Address, Qualification, WorkExperience
 
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello from the server side!")
+    return render(request,'index.html')
 
 
 def handler400(request):
